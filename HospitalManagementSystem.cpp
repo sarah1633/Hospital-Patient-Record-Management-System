@@ -17,7 +17,7 @@ struct Patient
     int age;
     string treatments[MAX_TREATMENTS]; // treatment or appointment
     int treatmentCount = 0;
-    stack<string> treatmentHistory; // 🔁 for undo
+    stack<string> treatmentHistory; // for undo 
     Patient *next;
 };
 
@@ -81,7 +81,7 @@ void addTreatment(int id, string treatmentName)
     }
 
     patient->treatments[patient->treatmentCount++] = treatmentName;
-    patient->treatmentHistory.push(treatmentName); // 🔁 Track for undo
+    patient->treatmentHistory.push(treatmentName); // Tracking undo 
     cout << "Treatment '" << treatmentName << "' added to " << patient->name << ".\n";
 }
 
