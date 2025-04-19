@@ -4,7 +4,6 @@
 #include <stack> 
 using namespace std;
 
-
 // Arrays and Linked Lists for patient records.//
 
 // struct to store patient info
