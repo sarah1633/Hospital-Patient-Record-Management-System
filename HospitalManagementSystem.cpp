@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string> 
 #include <limits> 
+#include <stack> 
 using namespace std;
 
 // Arrays and Linked Lists for patient records.//
@@ -16,6 +17,7 @@ struct Patient
     int age;
     string treatments[MAX_TREATMENTS]; // treatment or appointment
     int treatmentCount = 0;
+    stack<string> treatmentHistory; // 🔁 for undo
     Patient *next;
 };
 
@@ -25,7 +27,13 @@ Patient *head = nullptr;
 // Function to add a new patient
 void addPatient(int id, string name, string condition, int age)
 {
-    Patient *newPatient = new Patient{id, name, condition, age, {}, 0, nullptr};
+    Patient *newPatient = new Patient;
+    newPatient->id = id;
+    newPatient->name = name;
+    newPatient->condition = condition;
+    newPatient->age = age;
+    newPatient->treatmentCount = 0;
+    newPatient->next = nullptr;
 
     if (!head)
     {
@@ -73,6 +81,7 @@ void addTreatment(int id, string treatmentName)
     }
 
     patient->treatments[patient->treatmentCount++] = treatmentName;
+    patient->treatmentHistory.push(treatmentName); // 🔁 Track for undo
     cout << "Treatment '" << treatmentName << "' added to " << patient->name << ".\n";
 }
 
@@ -99,6 +108,30 @@ void viewTreatments(int id)
         cout << i + 1 << ". " << patient->treatments[i] << endl;
     }
 }
+
+void undoTreatment(int id)
+{
+    Patient *patient = searchPatient(id);
+
+    if (!patient)
+    {
+        cout << "Patient not found.\n";
+        return;
+    }
+
+    if (patient->treatmentHistory.empty())
+    {
+        cout << "No treatment to undo.\n";
+        return;
+    }
+
+    string last = patient->treatmentHistory.top();
+    patient->treatmentHistory.pop();
+    patient->treatmentCount--;
+
+    cout << "Last treatment removed: " << last << " from " << patient->name << ".\n";
+}
+
 void displayAllPatients() {
     Patient* temp = head;
     if (!temp) {
@@ -284,16 +317,17 @@ int main()
         cout << "2. Search Patient by ID\n";
         cout << "3. Add Treatment(or appointment) to Patient\n";
         cout << "4. View Treatments(or appointments) of Patient\n";
-        cout << "5. Display All Patients\n";
+        cout << "5. Undo Last Treatment\n";
+        cout << "6. Display All Patients\n";
         cout << "--- Emergency Room Queue ---\n";
-        cout << "6. Check-in to ER\n";
-        cout << "7. Call Next ER Patient\n";
-        cout << "8. Display ER Queue\n";
+        cout << "7. Check-in to ER\n";
+        cout << "8. Call Next ER Patient\n";
+        cout << "9. Display ER Queue\n";
         cout << "--- Critical Patient Queue ---\n";
-        cout << "9. Add Critical Patient\n";
-        cout << "10. Call Next Critical Patient\n";
-        cout << "11. Display Critical Queue\n";
-        cout << "12. Exit\n";
+        cout << "10. Add Critical Patient\n";
+        cout << "11. Call Next Critical Patient\n";
+        cout << "12. Display Critical Queue\n";
+        cout << "13. Exit\n";
         cout << "Enter your choice: ";
 
         while (!(cin >> choice)) {
@@ -302,7 +336,6 @@ int main()
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
 
         if (choice == 1)
         {
@@ -388,9 +421,17 @@ int main()
         }
         else if (choice == 5)
         {
+            int id;
+            cout << "Enter Patient ID to undo treatment: ";
+            cin >> id;
+            undoTreatment(id);
+        } 
+
+        else if (choice == 6)
+        {
             displayAllPatients();
         }
-        else if (choice == 6) {
+        else if (choice == 7) {
             int id;
             cout << "Enter Patient ID to check into ER: ";
              while (!(cin >> id)) {
@@ -406,14 +447,14 @@ int main()
             } else {
                 cout << "Patient with ID " << id << " not found in the system.\n";
             }
-        } else if (choice == 7) {
+        } else if (choice == 8) {
             Patient* nextER = emergencyQueue.dequeue();
             if (nextER) {
                 cout << "Calling next patient from ER: ID " << nextER->id << ", Name: " << nextER->name << endl;
             }
-        } else if (choice == 8) {
-            emergencyQueue.displayQueue();
         } else if (choice == 9) {
+            emergencyQueue.displayQueue();
+        } else if (choice == 10) {
             int id, priority;
             cout << "Enter Patient ID to add to Critical Queue: ";
              while (!(cin >> id)) {
@@ -437,15 +478,15 @@ int main()
             } else {
                 cout << "Patient with ID " << id << " not found in the system.\n";
             }
-        } else if (choice == 10) {
+        } else if (choice == 11) {
             Patient* nextCritical = criticalQueue.dequeue();
             if (nextCritical) {
                 cout << "Calling next critical patient: ID " << nextCritical->id << ", Name: " << nextCritical->name << " (Priority: " << /* Add code to display priority if needed */ ")\n";
             }
-        } else if (choice == 11) {
+        } else if (choice == 12) {
             criticalQueue.displayQueue();
         }
-        else if (choice == 12)
+        else if (choice == 13)
         {
             cout << "Exiting...\n";
             break;
