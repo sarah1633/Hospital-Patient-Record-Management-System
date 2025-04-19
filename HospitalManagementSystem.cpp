@@ -1,7 +1,7 @@
 #include <iostream>
-#include <string> 
-#include <limits> 
-#include <stack> 
+#include <string>
+#include <limits>
+#include <stack>
 using namespace std;
 
 // Arrays and Linked Lists for patient records.//
@@ -17,7 +17,7 @@ struct Patient
     int age;
     string treatments[MAX_TREATMENTS]; // treatment or appointment
     int treatmentCount = 0;
-    stack<string> treatmentHistory; // for undo 
+    stack<string> treatmentHistory; // for undo
     Patient *next;
 };
 
@@ -81,7 +81,7 @@ void addTreatment(int id, string treatmentName)
     }
 
     patient->treatments[patient->treatmentCount++] = treatmentName;
-    patient->treatmentHistory.push(treatmentName); // Tracking undo 
+    patient->treatmentHistory.push(treatmentName); // Tracking undo
     cout << "Treatment '" << treatmentName << "' added to " << patient->name << ".\n";
 }
 
@@ -132,91 +132,109 @@ void undoTreatment(int id)
     cout << "Last treatment removed: " << last << " from " << patient->name << ".\n";
 }
 
-void displayAllPatients() {
-    Patient* temp = head;
-    if (!temp) {
+void displayAllPatients()
+{
+    Patient *temp = head;
+    if (!temp)
+    {
         std::cout << "No patients in the system.\n";
         return;
     }
 
     std::cout << "\n--- All Patients ---\n";
-    while (temp) {
+    while (temp)
+    {
         std::cout << "ID: " << temp->id << ", Name: " << temp->name << ", Condition: " << temp->condition << ", Age: " << temp->age << std::endl;
         temp = temp->next;
     }
     std::cout << "--------------------\n";
 }
-struct QueueNode {
-    Patient* patient;
-    QueueNode* next;
+struct QueueNode
+{
+    Patient *patient;
+    QueueNode *next;
 
     // Constructor
-    QueueNode(Patient* p) : patient(p), next(nullptr) {}
+    QueueNode(Patient *p) : patient(p), next(nullptr) {}
 };
 
 // Queue class for Emergency Room (FIFO)
-class Queue {
+class Queue
+{
 private:
-    QueueNode* front;
-    QueueNode* rear;
+    QueueNode *front;
+    QueueNode *rear;
 
 public:
     Queue();  // Constructor
     ~Queue(); // Destructor
 
-    void enqueue(Patient* patient);
-    Patient* dequeue();
+    void enqueue(Patient *patient);
+    Patient *dequeue();
     bool isEmpty();
     void displayQueue();
 };
 
 Queue::Queue() : front(nullptr), rear(nullptr) {}
 
-Queue::~Queue() {
-    while (!isEmpty()) {
+Queue::~Queue()
+{
+    while (!isEmpty())
+    {
         dequeue(); // Dequeueing deletes the node
     }
 }
 
-void Queue::enqueue(Patient* patient) {
-    QueueNode* newNode = new QueueNode(patient);
-    if (isEmpty()) {
+void Queue::enqueue(Patient *patient)
+{
+    QueueNode *newNode = new QueueNode(patient);
+    if (isEmpty())
+    {
         front = rear = newNode;
-    } else {
+    }
+    else
+    {
         rear->next = newNode;
         rear = newNode;
     }
     std::cout << patient->name << " checked into the Emergency Room queue.\n";
 }
 
-Patient* Queue::dequeue() {
-    if (isEmpty()) {
+Patient *Queue::dequeue()
+{
+    if (isEmpty())
+    {
         std::cout << "Emergency Room queue is empty.\n";
         return nullptr;
     }
-    QueueNode* temp = front;
-    Patient* patient = temp->patient;
+    QueueNode *temp = front;
+    Patient *patient = temp->patient;
     front = front->next;
-    if (!front) {
+    if (!front)
+    {
         rear = nullptr; // If queue becomes empty
     }
     delete temp; // Delete the node, but not the patient object it points to
     return patient;
 }
 
-bool Queue::isEmpty() {
+bool Queue::isEmpty()
+{
     return front == nullptr;
 }
 
-void Queue::displayQueue() {
-    if (isEmpty()) {
+void Queue::displayQueue()
+{
+    if (isEmpty())
+    {
         std::cout << "Emergency Room queue is empty.\n";
         return;
     }
     std::cout << "\n--- Emergency Room Queue ---\n";
-    QueueNode* temp = front;
+    QueueNode *temp = front;
     int position = 1;
-    while (temp) {
+    while (temp)
+    {
         std::cout << position++ << ". ID: " << temp->patient->id << ", Name: " << temp->patient->name << ", Condition: " << temp->patient->condition << std::endl;
         temp = temp->next;
     }
@@ -224,47 +242,56 @@ void Queue::displayQueue() {
 }
 
 // Node structure for the Priority Queue
-struct PriorityQueueNode {
-    Patient* patient;
+struct PriorityQueueNode
+{
+    Patient *patient;
     int priority; // Lower number = Higher priority
-    PriorityQueueNode* next;
+    PriorityQueueNode *next;
 
     // Constructor
-    PriorityQueueNode(Patient* p, int pri) : patient(p), priority(pri), next(nullptr) {}
+    PriorityQueueNode(Patient *p, int pri) : patient(p), priority(pri), next(nullptr) {}
 };
 
 // Priority Queue class for Critical Patients (using a sorted linked list)
-class PriorityQueue {
+class PriorityQueue
+{
 private:
-    PriorityQueueNode* head;
+    PriorityQueueNode *head;
 
 public:
     PriorityQueue();  // Constructor
     ~PriorityQueue(); // Destructor
 
-    void enqueue(Patient* patient, int priority); // Inserts based on priority
-    Patient* dequeue(); // Removes highest priority patient
+    void enqueue(Patient *patient, int priority); // Inserts based on priority
+    Patient *dequeue();                           // Removes highest priority patient
     bool isEmpty();
     void displayQueue();
 };
 
 PriorityQueue::PriorityQueue() : head(nullptr) {}
 
-PriorityQueue::~PriorityQueue() {
-    while (!isEmpty()) {
+PriorityQueue::~PriorityQueue()
+{
+    while (!isEmpty())
+    {
         dequeue(); // Dequeueing deletes the node
     }
 }
 
-void PriorityQueue::enqueue(Patient* patient, int priority) {
-    PriorityQueueNode* newNode = new PriorityQueueNode(patient, priority);
+void PriorityQueue::enqueue(Patient *patient, int priority)
+{
+    PriorityQueueNode *newNode = new PriorityQueueNode(patient, priority);
 
-    if (isEmpty() || priority < head->priority) {
+    if (isEmpty() || priority < head->priority)
+    {
         newNode->next = head;
         head = newNode;
-    } else {
-        PriorityQueueNode* temp = head;
-        while (temp->next && temp->next->priority <= priority) {
+    }
+    else
+    {
+        PriorityQueueNode *temp = head;
+        while (temp->next && temp->next->priority <= priority)
+        {
             temp = temp->next;
         }
         newNode->next = temp->next;
@@ -273,31 +300,37 @@ void PriorityQueue::enqueue(Patient* patient, int priority) {
     std::cout << patient->name << " added to Critical Patient queue with priority " << priority << ".\n";
 }
 
-Patient* PriorityQueue::dequeue() {
-    if (isEmpty()) {
+Patient *PriorityQueue::dequeue()
+{
+    if (isEmpty())
+    {
         std::cout << "Critical Patient queue is empty.\n";
         return nullptr;
     }
-    PriorityQueueNode* temp = head;
-    Patient* patient = temp->patient;
+    PriorityQueueNode *temp = head;
+    Patient *patient = temp->patient;
     head = head->next;
     delete temp; // Delete the node, but not the patient object
     return patient;
 }
 
-bool PriorityQueue::isEmpty() {
+bool PriorityQueue::isEmpty()
+{
     return head == nullptr;
 }
 
-void PriorityQueue::displayQueue() {
-    if (isEmpty()) {
+void PriorityQueue::displayQueue()
+{
+    if (isEmpty())
+    {
         std::cout << "Critical Patient queue is empty.\n";
         return;
     }
     std::cout << "\n--- Critical Patient Queue ---\n";
-    PriorityQueueNode* temp = head;
+    PriorityQueueNode *temp = head;
     int position = 1;
-    while (temp) {
+    while (temp)
+    {
         std::cout << position++ << ". ID: " << temp->patient->id << ", Name: " << temp->patient->name << ", Condition: " << temp->patient->condition << " (Priority: " << temp->priority << ")\n";
         temp = temp->next;
     }
@@ -330,7 +363,8 @@ int main()
         cout << "13. Exit\n";
         cout << "Enter your choice: ";
 
-        while (!(cin >> choice)) {
+        while (!(cin >> choice))
+        {
             cout << "Invalid input. Please enter a number: ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -342,12 +376,13 @@ int main()
             int id, age;
             string name, condition;
             cout << "Enter Patient ID: ";
-            while (!(cin >> id)) {
+            while (!(cin >> id))
+            {
                 cout << "Invalid input. Please enter a number for ID: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-             cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
             cout << "Enter Name: ";
             getline(cin, name);
@@ -356,7 +391,8 @@ int main()
             getline(cin, condition);
 
             cout << "Enter Age: ";
-             while (!(cin >> age)) {
+            while (!(cin >> age))
+            {
                 cout << "Invalid input. Please enter a number for age: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -369,7 +405,8 @@ int main()
         {
             int id;
             cout << "Enter Patient ID to search: ";
-             while (!(cin >> id)) {
+            while (!(cin >> id))
+            {
                 cout << "Invalid input. Please enter a number for ID: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -396,7 +433,8 @@ int main()
             int id;
             string treatment;
             cout << "Enter Patient ID: ";
-             while (!(cin >> id)) {
+            while (!(cin >> id))
+            {
                 cout << "Invalid input. Please enter a number for ID: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -411,7 +449,8 @@ int main()
         {
             int id;
             cout << "Enter Patient ID: ";
-             while (!(cin >> id)) {
+            while (!(cin >> id))
+            {
                 cout << "Invalid input. Please enter a number for ID: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -425,65 +464,87 @@ int main()
             cout << "Enter Patient ID to undo treatment: ";
             cin >> id;
             undoTreatment(id);
-        } 
+        }
 
         else if (choice == 6)
         {
             displayAllPatients();
         }
-        else if (choice == 7) {
+        else if (choice == 7)
+        {
             int id;
             cout << "Enter Patient ID to check into ER: ";
-             while (!(cin >> id)) {
-                cout << "Invalid input. Please enter a number for ID: ";
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            }
-             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-            Patient* patient = searchPatient(id);
-            if (patient) {
-                emergencyQueue.enqueue(patient);
-            } else {
-                cout << "Patient with ID " << id << " not found in the system.\n";
-            }
-        } else if (choice == 8) {
-            Patient* nextER = emergencyQueue.dequeue();
-            if (nextER) {
-                cout << "Calling next patient from ER: ID " << nextER->id << ", Name: " << nextER->name << endl;
-            }
-        } else if (choice == 9) {
-            emergencyQueue.displayQueue();
-        } else if (choice == 10) {
-            int id, priority;
-            cout << "Enter Patient ID to add to Critical Queue: ";
-             while (!(cin >> id)) {
+            while (!(cin >> id))
+            {
                 cout << "Invalid input. Please enter a number for ID: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            Patient* patient = searchPatient(id);
-            if (patient) {
+            Patient *patient = searchPatient(id);
+            if (patient)
+            {
+                emergencyQueue.enqueue(patient);
+            }
+            else
+            {
+                cout << "Patient with ID " << id << " not found in the system.\n";
+            }
+        }
+        else if (choice == 8)
+        {
+            Patient *nextER = emergencyQueue.dequeue();
+            if (nextER)
+            {
+                cout << "Calling next patient from ER: ID " << nextER->id << ", Name: " << nextER->name << endl;
+            }
+        }
+        else if (choice == 9)
+        {
+            emergencyQueue.displayQueue();
+        }
+        else if (choice == 10)
+        {
+            int id, priority;
+            cout << "Enter Patient ID to add to Critical Queue: ";
+            while (!(cin >> id))
+            {
+                cout << "Invalid input. Please enter a number for ID: ";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+            Patient *patient = searchPatient(id);
+            if (patient)
+            {
                 cout << "Enter priority for critical patient (lower number = higher priority): ";
-                 while (!(cin >> priority)) {
+                while (!(cin >> priority))
+                {
                     cout << "Invalid input. Please enter a number for priority: ";
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
-                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                 criticalQueue.enqueue(patient, priority);
-            } else {
+            }
+            else
+            {
                 cout << "Patient with ID " << id << " not found in the system.\n";
             }
-        } else if (choice == 11) {
-            Patient* nextCritical = criticalQueue.dequeue();
-            if (nextCritical) {
+        }
+        else if (choice == 11)
+        {
+            Patient *nextCritical = criticalQueue.dequeue();
+            if (nextCritical)
+            {
                 cout << "Calling next critical patient: ID " << nextCritical->id << ", Name: " << nextCritical->name << " (Priority: " << /* Add code to display priority if needed */ ")\n";
             }
-        } else if (choice == 12) {
+        }
+        else if (choice == 12)
+        {
             criticalQueue.displayQueue();
         }
         else if (choice == 13)
