@@ -1,46 +1,34 @@
 #include <iostream>
 #include <string>
-#include <limits>
 #include <stack>
+#include <limits>
 using namespace std;
 
-// Arrays and Linked Lists for patient records.//
-
-// struct to store patient info
-#define MAX_TREATMENTS 100
-
-struct Patient
-{
+// Struct to store patient info
+struct Patient {
     int id;
     string name;
     string condition;
     int age;
-    string treatments[MAX_TREATMENTS]; // treatment or appointment
-    int treatmentCount = 0;
-    stack<string> treatmentHistory; // for undo
+    stack<string> treatmentHistory;
     Patient *next;
 };
 
-// Head pointer for the patient linked list
+// Head pointer for patient linked list
 Patient *head = nullptr;
 
 // Function to add a new patient
-void addPatient(int id, string name, string condition, int age)
-{
+void addPatient(int id, string name, string condition, int age) {
     Patient *newPatient = new Patient;
     newPatient->id = id;
     newPatient->name = name;
     newPatient->condition = condition;
     newPatient->age = age;
-    newPatient->treatmentCount = 0;
     newPatient->next = nullptr;
 
-    if (!head)
-    {
+    if (!head) {
         head = newPatient;
-    }
-    else
-    {
+    } else {
         Patient *temp = head;
         while (temp->next)
             temp = temp->next;
@@ -51,17 +39,34 @@ void addPatient(int id, string name, string condition, int age)
 }
 
 // Search for a patient by ID
-Patient *searchPatient(int id)
-{
+Patient *searchPatient(int id) {
     Patient *temp = head;
-    while (temp)
-    {
+    while (temp) {
         if (temp->id == id)
             return temp;
         temp = temp->next;
     }
     return nullptr;
 }
+
+// Display all patients
+void displayAllPatients() {
+    Patient *temp = head;
+    if (!temp) {
+        cout << "No patients in the system.\n";
+        return;
+    }
+
+    cout << "\n--- All Patients ---\n";
+    while (temp) {
+        cout << "ID: " << temp->id << ", Name: " << temp->name
+             << ", Condition: " << temp->condition << ", Age: " << temp->age << endl;
+        temp = temp->next;
+    }
+    cout << "--------------------\n";
+}
+
+////////////////////
 
 // Add a treatment(or appointment) to a patient
 void addTreatment(int id, string treatmentName)
@@ -132,23 +137,6 @@ void undoTreatment(int id)
     cout << "Last treatment removed: " << last << " from " << patient->name << ".\n";
 }
 
-void displayAllPatients()
-{
-    Patient *temp = head;
-    if (!temp)
-    {
-        std::cout << "No patients in the system.\n";
-        return;
-    }
-
-    std::cout << "\n--- All Patients ---\n";
-    while (temp)
-    {
-        std::cout << "ID: " << temp->id << ", Name: " << temp->name << ", Condition: " << temp->condition << ", Age: " << temp->age << std::endl;
-        temp = temp->next;
-    }
-    std::cout << "--------------------\n";
-}
 struct QueueNode
 {
     Patient *patient;
@@ -336,6 +324,7 @@ void PriorityQueue::displayQueue()
     }
     std::cout << "------------------------------\n";
 }
+
 int main()
 {
     int choice;
