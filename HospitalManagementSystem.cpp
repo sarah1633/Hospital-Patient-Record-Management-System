@@ -4,13 +4,17 @@
 #include <limits>
 using namespace std;
 
+#define MAX_TREATMENTS 100
+
 // Struct to store patient info
 struct Patient {
     int id;
     string name;
     string condition;
     int age;
-    stack<string> treatmentHistory;
+    string treatments[MAX_TREATMENTS];
+    int treatmentCount; 
+    stack<string> treatmentHistory; 
     Patient *next;
 };
 
@@ -66,8 +70,6 @@ void displayAllPatients() {
     cout << "--------------------\n";
 }
 
-////////////////////
-
 // Add a treatment(or appointment) to a patient
 void addTreatment(int id, string treatmentName)
 {
@@ -113,7 +115,7 @@ void viewTreatments(int id)
         cout << i + 1 << ". " << patient->treatments[i] << endl;
     }
 }
-
+// Remove the last treatment added to the patient history
 void undoTreatment(int id)
 {
     Patient *patient = searchPatient(id);
